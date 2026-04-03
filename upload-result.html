@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Result | UPSS Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
+    <style>
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .upload-card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .form-label { font-weight: 600; color: #555; font-size: 0.9rem; }
+        .btn-upload { background: #6c5ce7; color: white; padding: 12px; border-radius: 8px; border: none; width: 100%; font-weight: bold; transition: 0.3s; }
+        .btn-upload:hover { background: #5b4bc4; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+    <h1>testig</h1>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="upload-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="fw-bold m-0 text-dark">Upload New Result</h3>
+                    <a href="teacher-login.html" class="btn btn-outline-danger btn-sm">Logout</a>
+                </div>
+
+                <form id="uploadForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Exam Number</label>
+                            <input type="text" id="regNo" class="form-control" placeholder="UPSS/2026/001" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Student Full Name</label>
+                            <input type="text" id="sName" class="form-control" placeholder="e.g. John Doe" required>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label">Result Checker PIN</label>
+                            <input type="text" id="sPin" class="form-control" placeholder="Create a 4-digit PIN" required>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h6 class="text-uppercase text-muted small fw-bold">Academic Performance</h6>
+                        <div class="col-md-6">
+                            <label class="form-label">Mathematics Score (100)</label>
+                            <input type="number" id="mScore" class="form-control" min="0" max="100" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">English Score (100)</label>
+                            <input type="number" id="eScore" class="form-control" min="0" max="100" required>
+                        </div>
+                    </div>
+
+                    <div class="mt-5">
+                        <button type="submit" class="btn-upload" id="submitBtn">
+                            <i class="fas fa-cloud-upload-alt me-2"></i> Save to Database
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+
+    <script>
+    // 1. Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIza...",
+        authDomain: "result-checker-c7a19.firebaseapp.com",
+        projectId: "result-checker-c7a19",
+        storageBucket: "result-checker-c7a19.appspot.com",
+        messagingSenderId: "199064015810",
+        appId: "1:199064015810:web:e11290cc380e0d9b463c5b"
+    };
+
+    // 2. Initialize
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // 3. Form Logic
+    const uploadForm = document.getElementById('uploadForm');
+    
+    uploadForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const btn = document.getElementById('submitBtn');
+        btn.innerHTML = "Uploading...";
+        btn.disabled = true;
+
+        const resultData = {
+            examNo: document.getElementById('regNo').value,
+            name: document.getElementById('sName').value,
+            pin: document.getElementById('sPin').value,
+            math: document.getElementById('mScore').value,
+            english: document.getElementById('eScore').value,
+            createdAt: new Date()
+        };
+
+        try {
+            await db.collection('result').add(resultData);
+            alert("Success! " + resultData.name + " is now in the database.");
+            uploadForm.reset();
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Failed to upload: " + error.message);
+        } finally {
+            btn.innerHTML = '<i class="fas fa-cloud-upload-alt me-2"></i> Save to Database';
+            btn.disabled = false;
+        }
+    });
+</script>
+
+</body>
+</html>

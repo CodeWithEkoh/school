@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checker</title>
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<style>
+    * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+:root {
+    --sage-green: #97b4a2;
+    --dark-text: #2d3e33;
+    --input-bg: #ffffff;
+    --transition: all 0.3s ease;
+}
+
+body {
+    background-color: var(--sage-green);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+</style>
+<body>
+    <div class="portal-wrapper">
+    
+        <div class="welcome-section" id="welcomePanel">
+            <div class="welcome-content">
+                <div class="icon-box">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                
+                <h1 id="mainGreeting">Hello!</h1>
+                <p id="subGreeting">Welcome Student</p>
+                
+                <div class="illustration-container d-none d-md-block">
+                    <img src="img/student-illustration.svg" alt="Portal Illustration" id="portalImage">
+                </div>
+            </div>
+        </div>
+    
+        <div class="form-section">
+            <div class="form-card">
+                <h2 id="portalTitle">Check Result</h2>
+                <p id="portalDesc" class="text-muted">Enter your student details</p>
+    
+                <form id="loginForm">
+                    <div class="input-group">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="text" id="userInput" placeholder="Exam No" required>
+                    </div>
+    
+                    <div class="input-group">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="passwordInput" placeholder="Pin" required>
+                        <i class="fas fa-eye-slash toggle-pass" id="eyeIcon"></i>
+                    </div>
+                    
+                   
+    
+                    <div class="forgot-link">
+                        <a href="#">Forgot Password?</a>
+                    </div>
+    
+                    <button type="submit" class="btn-submit" id="submitBtn">Login</button>
+                </form>
+    
+                <div class="social-auth">
+                    <p>Or login with</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-google"></i></a>
+                        <a href="#"><i class="fab fa-apple"></i></a>
+                    </div>
+                </div>
+    
+                <div class="switcher-area">
+                    <p id="switchText">Are you a Teacher?</p>
+                    <button type="button" id="togglePortalBtn" onclick="handlePortalSwitch()">
+                        Teacher Login
+                    </button>
+                </div>
+            </div>
+        </div>
+    
+    </div>
+
+
+    <script>
+        // Variable to track the current portal state
+let isStudentMode = true;
+
+function handlePortalSwitch() {
+    // 1. Get all the HTML elements we need to change
+    const mainGreeting = document.getElementById('mainGreeting');
+    const subGreeting = document.getElementById('subGreeting');
+    const portalTitle = document.getElementById('portalTitle');
+    const portalDesc = document.getElementById('portalDesc');
+    const userInput = document.getElementById('userInput');
+    const switchText = document.getElementById('switchText');
+    const toggleBtn = document.getElementById('togglePortalBtn');
+    const welcomePanel = document.getElementById('welcomePanel');
+
+    // 2. Toggle Logic
+    if (isStudentMode) {
+        // --- SWITCH TO TEACHER MODE ---
+        mainGreeting.innerText = "Welcome, Staff";
+        subGreeting.innerText = "Result Management Portal";
+        portalTitle.innerText = "Teacher Login";
+        portalDesc.innerText = "Enter your staff credentials to upload results";
+        
+        // Change Input Type/Placeholder
+        userInput.placeholder = "Staff Email Address";
+        userInput.type = "email";
+        
+        // Change Switcher Text
+        switchText.innerText = "Are you a Student?";
+        toggleBtn.innerText = "Student Result Checker";
+        
+        // Optional: Change side color to distinguish Teacher mode
+        welcomePanel.style.backgroundColor = "#2d3e33"; // Darker sage
+        
+        isStudentMode = false;
+    } else {
+        // --- SWITCH BACK TO STUDENT MODE ---
+        mainGreeting.innerText = "Hello!";
+        subGreeting.innerText = "Welcome Student";
+        portalTitle.innerText = "Login";
+        portalDesc.innerText = "Enter your account details";
+        
+        // Change Input Type/Placeholder
+        userInput.placeholder = "Admission Number / Email";
+        userInput.type = "text";
+        
+        // Change Switcher Text
+        switchText.innerText = "Are you a Teacher?";
+        toggleBtn.innerText = "Teacher Login";
+        
+        // Reset color
+        welcomePanel.style.backgroundColor = "#97b4a2"; // Original Sage Green
+        
+        isStudentMode = true;
+    }
+}
+
+// 3. Password Visibility Toggle (The Eye Icon)
+const eyeIcon = document.getElementById('eyeIcon');
+const passwordInput = document.getElementById('passwordInput');
+
+eyeIcon.addEventListener('click', () => {
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    
+    // Toggle the icon class
+    eyeIcon.classList.toggle('fa-eye');
+    eyeIcon.classList.toggle('fa-eye-slash');
+});
+    </script>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyATfeLlHqie9wvmVuOuhBL5BaBwdYIZC7w",
+      authDomain: "result-checker-c7a19.firebaseapp.com",
+      projectId: "result-checker-c7a19",
+      storageBucket: "result-checker-c7a19.firebasestorage.app",
+      messagingSenderId: "199064015810",
+      appId: "1:199064015810:web:e11290cc380e0d9b463c5b"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    
+  </script>
+
+
+<script>
+    // 1. Paste your Firebase Config here
+    const firebaseConfig = {
+    apiKey: "AIzaSyATfeLlHqie9wvmVuOuhBL5BaBwdYIZC7w",
+    authDomain: "result-checker-c7a19.firebaseapp.com",
+    projectId: "result-checker-c7a19",
+    storageBucket: "result-checker-c7a19.firebasestorage.app",
+    messagingSenderId: "199064015810",
+    appId: "1:199064015810:web:e11290cc380e0d9b463c5b"
+  };
+  
+    // 2. Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  
+    // 3. The Click Logic for your Red Arrow Button
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault(); // Stop page refresh
+  
+        // Grab the values from your inputs
+        const examNo = document.getElementById('userInput').value;
+        const pin = document.getElementById('passwordInput').value;
+  
+        try {
+            // Look inside your 'result' collection (the one in your photo)
+            const resultRef = db.collection('result');
+            const query = await resultRef
+                .where('examNo', '==', examNo)
+                .where('pin', '==', pin)
+                .get();
+  
+            if (query.empty) {
+                alert("Access Denied: Incorrect Exam Number or Pin.");
+            } else {
+                // Success! Find David's data
+               // Success! Find David's data
+query.forEach(doc => {
+    const studentData = doc.data();
+    
+    // We stop using localStorage here because file:/// blocks it
+    alert("Welcome, " + studentData.name);
+    
+    // This sends the Exam No through the address bar to the next page
+    window.location.href = 'view-result.html?id=' + studentData.examNo;
+});
+            }
+        } catch (error) {
+            console.error("Database Error:", error);
+            alert("Check your internet connection.");
+        }
+    });
+  </script>
+
+
+</body>
+</html>

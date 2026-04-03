@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Access | UPSS Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+
+<div class="login-container">
+    <div class="login-form-side">
+        <div class="form-card">
+            <h2 class="fw-bold">Staff Login</h2>
+            <p class="text-muted">Enter authorized credentials to manage results.</p>
+
+            <form id="teacherLoginForm">
+                <div class="input-group">
+                    <i class="fas fa-user-tie input-icon"></i>
+                    <input type="email" id="teacherEmail" placeholder="Staff Email" required>
+                </div>
+
+                <div class="input-group">
+                    <i class="fas fa-key input-icon"></i>
+                    <input type="password" id="teacherPass" placeholder="Access Password" required>
+                    <i class="fas fa-eye-slash toggle-pass" id="eyeIcon"></i>
+                </div>
+
+                <button type="submit" class="btn-submit" id="loginBtn">Enter Dashboard</button>
+            </form>
+
+            <div class="mt-4 text-center">
+                <a href="result.html" class="text-decoration-none small text-muted">
+                   <i class="fas fa-graduation-cap"></i> Switch to Student Portal
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="login-info-side">
+        <div class="welcome-content">
+            <h1 class="display-4 fw-bold">Admin <br>Dashboard</h1>
+            <p class="opacity-75">Securely upload scores, manage student profiles, and generate termly reports.</p>
+            
+            <div class="illustration-box mt-5">
+                 <i class="fas fa-chalkboard-teacher fa-8x opacity-25"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+<script>
+    // 1. YOUR FIREBASE CONFIG (Paste the same one you used in result.html)
+    const firebaseConfig = {
+    apiKey: "AIzaSyATfeLlHqie9wvmVuOuhBL5BaBwdYIZC7w",
+    authDomain: "result-checker-c7a19.firebaseapp.com",
+    projectId: "result-checker-c7a19",
+    storageBucket: "result-checker-c7a19.firebasestorage.app",
+    messagingSenderId: "199064015810",
+    appId: "1:199064015810:web:e11290cc380e0d9b463c5b"
+  };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // 2. Login Logic
+    document.getElementById('teacherLoginForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('teacherEmail').value;
+        const pass = document.getElementById('teacherPass').value;
+
+        // Verify with Firebase Authentication
+        auth.signInWithEmailAndPassword(email, pass)
+            .then((userCredential) => {
+               // alert("Access Granted. Welcome back!");
+                window.location.href = 'upload-result.html';
+            })
+            .catch((error) => {
+                alert("Invalid Access: " + error.message);
+            });
+    });
+</script>
+
+</body>
+</html>
